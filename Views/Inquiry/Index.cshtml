@@ -1,0 +1,43 @@
+﻿@model List<CarDealerApp.Models.Inquiry>
+
+@{
+    var car = ViewBag.Car as CarDealerApp.Models.Car;
+    ViewData["Title"] = "Inquiries for " + car?.Make + " " + car?.Model;
+}
+
+<h2>@car.Make @car.Model - Inquiries</h2>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}
+
+<h3>Existing Inquiries</h3>
+@if (Model.Count == 0)
+{
+    <p>No inquiries yet.</p>
+}
+else
+{
+    <ul>
+        @foreach (var i in Model)
+        {
+            <li><strong>@i.Name (@i.Email):</strong> @i.Message</li>
+        }
+    </ul>
+}
+
+<h3>Submit New Inquiry</h3>
+<form method="post" asp-action="Submit" asp-controller="Inquiry">
+    <input type="hidden" name="CarId" value="@car.Id" />
+    <div class="mb-2">
+        <input class="form-control" name="Name" placeholder="Your Name" required />
+    </div>
+    <div class="mb-2">
+        <input type="email" class="form-control" name="Email" placeholder="Your Email" required />
+    </div>
+    <div class="mb-2">
+        <textarea class="form-control" name="Message" placeholder="Your Message" required></textarea>
+    </div>
+    <button class="btn btn-primary" type="submit">Send Inquiry</button>
+</form>

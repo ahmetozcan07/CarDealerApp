@@ -1,32 +1,17 @@
-﻿@model IEnumerable<CarDealerApp.Models.Car>
+﻿@model List<CarDealerApp.Models.Car>
+@{
+    ViewData["Title"] = "Cars List";
+}
 
-<h2>Available Cars</h2>
+<h2>Cars for Sale</h2>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Make</th>
-            <th>Model</th>
-            <th>Year</th>
-            <th>Price</th>
-            <th>Image</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var car in Model)
-        {
-            <tr>
-                <td>@car.Make</td>
-                <td>@car.Model</td>
-                <td>@car.Year</td>
-                <td>@car.Price.ToString("C")</td>
-                <td>
-                    @if (!string.IsNullOrEmpty(car.ImagePath))
-                    {
-                        <img src="@car.ImagePath" width="120" />
-                    }
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<ul>
+    @foreach (var car in Model)
+    {
+        <li>
+            <a asp-controller="Cars" asp-action="Details" asp-route-id="@car.Id">
+                @car.Make @car.Model (@car.Year)
+            </a>
+        </li>
+    }
+</ul>

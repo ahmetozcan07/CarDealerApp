@@ -5,54 +5,28 @@ using System.Threading.Tasks;
 
 namespace CarDealerApp.Controllers
 {
-    public class AdminController : Controller
+    public class UploadController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _env;
-        private readonly IConfiguration _config;
 
-        public AdminController(ApplicationDbContext context, IWebHostEnvironment env, IConfiguration config)
+        public UploadController(ApplicationDbContext context, IWebHostEnvironment env)
         {
             _context = context;
             _env = env;
-            _config = config;
         }
 
-        // Admin Login sayfası
         [HttpGet]
-        public IActionResult Login()
+        public IActionResult Index()
         {
-            return View();
+            return View("Admin/Upload"); // Views/Upload/Upload.cshtml
         }
 
         [HttpPost]
-        public IActionResult Login(Admin admin)
-        {
-            var username = _config["Admin:Username"];
-            var password = _config["Admin:Password"];
-
-            if (admin.Username == username && admin.Password == password)
-            {
-                return RedirectToAction("Upload");
-            }
-
-            ViewBag.Error = "Invalid credentials";
-            return View();
-        }
-
-        // Upload sayfası GET
-        [HttpGet]
-        public IActionResult Upload()
-        {
-            return View(); // Views/Admin/Upload.cshtml
-        }
-
-        // Upload sayfası POST
-        [HttpPost]
-        public async Task<IActionResult> Upload(Car car, IFormFile? image)
+        public async Task<IActionResult> Index(Car car, IFormFile? image)
         {
             if (!ModelState.IsValid)
-                return View(car);
+                return View("Admin/Upload", car);
 
             if (image != null && image.Length > 0)
             {
@@ -66,14 +40,14 @@ namespace CarDealerApp.Controllers
                 using var fileStream = new FileStream(filePath, FileMode.Create);
                 await image.CopyToAsync(fileStream);
 
-                car.ImagePath  = "/uploads/" + fileName;
+                car.ImagePath = "/uploads/" + fileName;
             }
 
             _context.Cars.Add(car);
             await _context.SaveChangesAsync();
 
             ViewBag.Message = "Car uploaded successfully!";
-            return View();
+            return View("Admin/Upload");
         }
     }
 }
