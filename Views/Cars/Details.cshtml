@@ -1,0 +1,57 @@
+﻿@model CarDealerApp.Models.Car
+@{
+    ViewData["Title"] = "Car Details";
+}
+<div class="row">
+    <div class="col-md-6">
+        @if (!string.IsNullOrEmpty(Model.ImagePath))
+        {
+            <img src="@Model.ImagePath" class="img-fluid" />
+        }
+    </div>
+    <div class="col-md-6">
+        <h2>@Model.Make @Model.Model (@Model.Year)</h2>
+        <p>@Model.Description</p>
+        <p><strong>Price: </strong>@Model.Price.ToString("C")</p>
+
+        <h4>Send Inquiry</h4>
+        <form id="inquiryForm">
+            <input type="hidden" id="carId" value="@Model.Id" />
+            <div class="mb-2">
+                <input class="form-control" id="name" placeholder="Your name" />
+            </div>
+            <div class="mb-2">
+                <input class="form-control" id="email" placeholder="Email" />
+            </div>
+            <div class="mb-2">
+                <textarea class="form-control" id="message" placeholder="Message"></textarea>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="sendInquiry()">Send</button>
+        </form>
+
+        <div id="inquiryResult" class="mt-2"></div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        async function sendInquiry() {
+            const payload = {
+                carId: parseInt(document.getElementById('carId').value),
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                message: document.getElementById('message').value
+            };
+            const res = await fetch('/api/inquiries', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (res.ok) {
+                document.getElementById('inquiryResult').innerHTML = '<div class="alert alert-success">Inquiry sent!</div>';
+            } else {
+                document.getElementById('inquiryResult').innerHTML = '<div class="alert alert-danger">Failed to send.</div>';
+            }
+        }
+    </script>
+}
